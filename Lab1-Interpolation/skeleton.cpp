@@ -6,7 +6,8 @@
  */
 
 #include <iostream>
-#include <glm/glm.hpp>
+//#include <glm/glm.hpp>
+#include "/usr/local/include/glm/glm.hpp"
 #include <vector>
 #include "SDL2auxiliary.h"
 
