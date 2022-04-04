@@ -113,7 +113,8 @@ void Draw() {
   {
         // Add code for projecting and drawing each star
         vec2 pos = projection(stars[s], SCREEN_HEIGHT, SCREEN_WIDTH);
-        sdlAux->putPixel(pos.x, pos.y, glm::vec3(1,1,1));
+        vec3 color = 0.2f * vec3(1,1,1) / (stars[s].z*stars[s].z);
+        sdlAux->putPixel(pos.x, pos.y, color);
   }
 
   sdlAux->render();
