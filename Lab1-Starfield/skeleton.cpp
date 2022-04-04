@@ -22,6 +22,8 @@ const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 SDL2Aux *sdlAux;
 
+int t;
+
 vector<vec3> stars( 1000 );
 
 // --------------------------------------------------------
@@ -41,7 +43,31 @@ vec2 projection(vec3 position, float h, float w)
   return vec2(u, v);
 }
 
-int main(int argc, char* argv[]) {
+void Update()
+{
+  float velocity = 0.001;
+
+  // Calculate the delta between frames (function calls).
+  int t2 = SDL_GetTicks();
+  float dt = float(t2-t);
+  t = t2;
+
+  for( int s=0; s<stars.size(); ++s )
+  {
+        // Add code for update of stars.
+        stars[s] = vec3(stars[s].x, stars[s].y, stars[s].z - velocity * dt);
+
+        // Wrap-around functionality.
+        if( stars[s].z <= 0 )
+          stars[s].z += 1;
+        if( stars[s].z > 1 )
+          stars[s].z -= 1;
+  }
+
+}
+
+int main(int argc, char* argv[])
+{
 
   //Create a for-loop in the beginning of the main function that loops through all stars and sets random positions within.
   for (int i = 0; i < stars.size(); ++i)
@@ -59,7 +85,9 @@ int main(int argc, char* argv[]) {
 
   sdlAux = new SDL2Aux(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-  while (!sdlAux->quitEvent()) {
+  while (!sdlAux->quitEvent())
+  {
+    Update();
     Draw();
   }
 
@@ -72,8 +100,10 @@ void Draw() {
   sdlAux->clearPixels();
   
   // TODO: Temporary for SDL_FillRect as I can't get this to work on SDL2.0. Change this ASAP.
-  for (int y = 0; y < SCREEN_HEIGHT; ++y) {
-    for (int x = 0; x < SCREEN_WIDTH; ++x) {
+  for (int y = 0; y < SCREEN_HEIGHT; ++y)
+  {
+    for (int x = 0; x < SCREEN_WIDTH; ++x)
+    {
       vec3 color(0.0, 0.0, 0.0);
       sdlAux->putPixel(x, y, color);
     }
