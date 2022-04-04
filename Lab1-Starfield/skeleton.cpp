@@ -13,6 +13,7 @@
 
 using namespace std;
 using glm::vec3;
+using glm::vec2;
 
 // --------------------------------------------------------
 // GLOBAL VARIABLES
@@ -20,6 +21,8 @@ using glm::vec3;
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 SDL2Aux *sdlAux;
+
+vector<vec3> stars( 1000 );
 
 // --------------------------------------------------------
 // FUNCTION DECLARATIONS
@@ -29,7 +32,31 @@ void Draw();
 // --------------------------------------------------------
 // FUNCTION DEFINITIONS
 
+vec2 projection(vec3 position, float h, float w)
+{
+  float focalLength = h / 2;
+  float u = ( focalLength * (position.x / position.z) ) + (w / 2);
+  float v = ( focalLength * (position.y / position.z) ) + (h / 2);
+
+  return vec2(u, v);
+}
+
 int main(int argc, char* argv[]) {
+
+  //Create a for-loop in the beginning of the main function that loops through all stars and sets random positions within.
+  for (int i = 0; i < stars.size(); ++i)
+  {
+    // ? Hacky solution, maybe change?
+    float x = (float(rand()) / float(RAND_MAX) * 2) - 1;
+    float y = (float(rand()) / float(RAND_MAX) * 2) - 1;
+    float z = float(rand()) / float(RAND_MAX);
+
+    //Test printout.
+    //std::cout << '(' << x << ' ' << y << ' ' << z << ')' << '\n';
+
+    stars[i] = vec3(x, y, z);
+  }
+
   sdlAux = new SDL2Aux(SCREEN_WIDTH, SCREEN_HEIGHT);
 
   while (!sdlAux->quitEvent()) {
@@ -41,14 +68,33 @@ int main(int argc, char* argv[]) {
 }
 
 void Draw() {
-  sdlAux->clearPixels();
 
+  sdlAux->clearPixels();
+  
+  // TODO: Temporary for SDL_FillRect as I can't get this to work on SDL2.0. Change this ASAP.
   for (int y = 0; y < SCREEN_HEIGHT; ++y) {
     for (int x = 0; x < SCREEN_WIDTH; ++x) {
-      vec3 color(0.0, 0.0, 1.0);
+      vec3 color(0.0, 0.0, 0.0);
       sdlAux->putPixel(x, y, color);
     }
   }
 
+  for( size_t s=0; s<stars.size(); ++s )
+  {
+        // Add code for projecting and drawing each star
+        vec2 pos = projection(stars[s], SCREEN_HEIGHT, SCREEN_WIDTH);
+        sdlAux->putPixel(pos.x, pos.y, glm::vec3(1,1,1));
+  }
+
   sdlAux->render();
 }
+
+
+/*SDL_Surface *s;
+  s = SDL_CreateRGBSurface(0, SCREEN_WIDTH, SCREEN_HEIGHT, 32, 0, 0, 0, 0);
+  SDL_FillRect(s, 0, 0);
+  //SDL_FillRect(s, NULL, SDL_MapRGB(s->format, 0, 0, 0));
+
+  //SDL_FillRect( sdlAux, 0, 0 );
+
+  //SDL_FillRect*/
